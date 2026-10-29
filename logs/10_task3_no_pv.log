@@ -1,0 +1,26 @@
+$ sudo mkdir -p /mnt/disks/sc-demo && ls -ld /mnt/disks/sc-demo
+drwxr-xr-x 2 root root 4096 Oct 29 22:56 /mnt/disks/sc-demo
+$ kubectl apply -n storage-hw -f manifests/sc.yaml
+storageclass.storage.k8s.io/local-sc created
+persistentvolumeclaim/data-sc-pvc created
+deployment.apps/data-exchange-sc created
+$ sleep 20; kubectl get sc,pvc,pods -n storage-hw
+NAME                                   PROVISIONER                    RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+storageclass.storage.k8s.io/local-sc   kubernetes.io/no-provisioner   Delete          WaitForFirstConsumer   false                  20s
+
+NAME                                STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+persistentvolumeclaim/data-sc-pvc   Pending                                      local-sc       <unset>                 20s
+
+NAME                                    READY   STATUS    RESTARTS   AGE
+pod/data-exchange-sc-7d84bfb77d-jg9lt   0/2     Pending   0          20s
+$ kubectl describe pvc data-sc-pvc -n storage-hw | tail -5
+Events:
+  Type    Reason                Age               From                         Message
+  ----    ------                ----              ----                         -------
+  Normal  WaitForFirstConsumer  20s               persistentvolume-controller  waiting for first consumer to be created before binding
+  Normal  WaitForPodScheduled   3s (x2 over 18s)  persistentvolume-controller  waiting for pod data-exchange-sc-7d84bfb77d-jg9lt to be scheduled
+$ kubectl describe pod -l app=data-exchange-sc -n storage-hw | tail -4
+Events:
+  Type     Reason            Age   From               Message
+  ----     ------            ----  ----               -------
+  Warning  FailedScheduling  20s   default-scheduler  0/1 nodes are available: 1 node(s) didn't find available persistent volumes to bind. no new claims to deallocate, preemption: 0/1 nodes are available: 1 Preemption is not helpful for scheduling.

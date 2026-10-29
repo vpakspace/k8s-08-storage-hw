@@ -1,0 +1,18 @@
+$ kubectl exec -n storage-hw deploy/data-exchange-pvc -c multitool -- timeout 13 tail -f /data/out.txt
+2026-10-29 15:53:50 line from busybox (PV)
+2026-10-29 15:53:55 line from busybox (PV)
+2026-10-29 15:54:00 line from busybox (PV)
+2026-10-29 15:54:15 line from busybox (PV)
+2026-10-29 15:54:20 line from busybox (PV)
+2026-10-29 15:54:25 line from busybox (PV)
+2026-10-29 15:54:30 line from busybox (PV)
+2026-10-29 15:54:35 line from busybox (PV)
+2026-10-29 15:54:40 line from busybox (PV)
+2026-10-29 15:54:45 line from busybox (PV)
+2026-10-29 15:54:50 line from busybox (PV)
+2026-10-29 15:54:59 line from busybox (PV)
+2026-10-29 15:55:04 line from busybox (PV)
+command terminated with exit code 143
+$ ls -l /mnt/data/pv-demo
+total 4
+-rw-r--r-- 1 root root 559 Oct 29 22:55 out.txt

@@ -1,0 +1,26 @@
+# PV, которого нет в шаблоне sc.yaml, но без которого PVC класса local-sc не получит том:
+# no-provisioner сам PV не создаёт.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-local
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  # PV относится к классу local-sc: только PVC с этим классом может на него встать
+  storageClassName: local-sc
+  # local-том физически лежит на одной ноде, поэтому nodeAffinity обязателен; каталог должен существовать заранее
+  local:
+    path: /mnt/disks/sc-demo
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - vladspace-virtualbox

@@ -1,0 +1,10 @@
+$ kubectl create namespace storage-hw
+namespace/storage-hw created
+$ kubectl apply -n storage-hw -f manifests/containers-data-exchange.yaml
+deployment.apps/data-exchange created
+$ kubectl rollout status deployment/data-exchange -n storage-hw --timeout=180s
+Waiting for deployment "data-exchange" rollout to finish: 0 of 1 updated replicas are available...
+deployment "data-exchange" successfully rolled out
+$ kubectl get pods -n storage-hw
+NAME                             READY   STATUS    RESTARTS   AGE
+data-exchange-67888cddd4-brf9x   2/2     Running   0          14s

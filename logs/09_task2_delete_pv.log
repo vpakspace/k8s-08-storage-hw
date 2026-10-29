@@ -1,0 +1,10 @@
+$ kubectl delete pv pv-demo
+persistentvolume "pv-demo" deleted
+$ kubectl get pv
+No resources found
+$ ls -l /mnt/data/pv-demo
+total 4
+-rw-r--r-- 1 root root 817 Oct 29 22:55 out.txt
+$ tail -n 2 /mnt/data/pv-demo/out.txt
+2026-10-29 15:55:29 line from busybox (PV)
+2026-10-29 15:55:57 line from busybox (PV)

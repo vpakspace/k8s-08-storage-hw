@@ -1,0 +1,78 @@
+$ kubectl describe pods data-exchange -n storage-hw
+Name:             data-exchange-67888cddd4-brf9x
+Namespace:        storage-hw
+Priority:         0
+Service Account:  default
+Node:             vladspace-virtualbox/10.0.2.15
+Start Time:       Thu, 29 Oct 2026 22:50:58 +0700
+Labels:           app=data-exchange
+                  pod-template-hash=67888cddd4
+Annotations:      cni.projectcalico.org/containerID: c82484167c7630587c5b15d9abc88acdfc13245f78367c9a422eac47df1dfee5
+                  cni.projectcalico.org/podIP: 10.1.144.78/32
+                  cni.projectcalico.org/podIPs: 10.1.144.78/32
+Status:           Running
+IP:               10.1.144.78
+IPs:
+  IP:           10.1.144.78
+Controlled By:  ReplicaSet/data-exchange-67888cddd4
+Containers:
+  busybox:
+    Container ID:  containerd://5c4f5d1377117d931dda36dd6292ee7bfda59df6216aff0754e53a7556100037
+    Image:         busybox:1.36
+    Image ID:      docker.io/library/busybox@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      /bin/sh
+      -c
+    Args:
+      while true; do
+        echo "$(date '+%F %T') line from busybox" >> /data/out.txt
+        sleep 5
+      done
+      
+    State:          Running
+      Started:      Thu, 29 Oct 2026 22:51:04 +0700
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /data from shared-data (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-5d6sb (ro)
+  multitool:
+    Container ID:   containerd://875a5611fe908288b08adc2734d8dedf79813043a28236af347db5d85b777bb4
+    Image:          wbitt/network-multitool:3.24.4
+    Image ID:       docker.io/wbitt/network-multitool@sha256:98d24ba5e94c74b153603dc4022aa15100ce33bccf7d0d59f8c2a3e088c90471
+    Port:           <none>
+    Host Port:      <none>
+    State:          Running
+      Started:      Thu, 29 Oct 2026 22:51:11 +0700
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /data from shared-data (ro)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-5d6sb (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  shared-data:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:     
+    SizeLimit:  <unset>
+  kube-api-access-5d6sb:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+

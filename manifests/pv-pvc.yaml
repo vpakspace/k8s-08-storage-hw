@@ -1,0 +1,71 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-demo
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  # Retain: при удалении PVC том и данные сохраняются, PV переходит в Released
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: /mnt/data/pv-demo
+    # без type kubelet ничего не проверяет и не создаёт; DirectoryOrCreate создаст каталог на узле
+    type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: data-pvc
+spec:
+  # привязка к конкретному PV по имени
+  volumeName: pv-demo
+  # пустой класс явно: PVC не должен получить StorageClass по умолчанию (если он появится в кластере)
+  storageClassName: ""
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-exchange-pvc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: data-exchange-pvc
+  template:
+    metadata:
+      labels:
+        app: data-exchange-pvc
+    spec:
+      containers:
+        - name: busybox
+          image: busybox:1.36
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              while true; do
+                echo "$(date '+%F %T') line from busybox (PV)" >> /data/out.txt
+                sleep 5
+              done
+          volumeMounts:
+            - name: pv-storage
+              mountPath: /data
+        - name: multitool
+          image: wbitt/network-multitool:3.24.4
+          volumeMounts:
+            - name: pv-storage
+              mountPath: /data
+              readOnly: true
+      volumes:
+        - name: pv-storage
+          persistentVolumeClaim:
+            claimName: data-pvc

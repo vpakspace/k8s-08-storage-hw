@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-exchange
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: data-exchange
+  template:
+    metadata:
+      labels:
+        app: data-exchange
+    spec:
+      containers:
+        - name: busybox
+          image: busybox:1.36
+          command: ["/bin/sh", "-c"]
+          # каждые 5 секунд дописываем строку с временем в общий файл (>> дозаписывает, > затирала бы файл)
+          args:
+            - |
+              while true; do
+                echo "$(date '+%F %T') line from busybox" >> /data/out.txt
+                sleep 5
+              done
+          volumeMounts:
+            - name: shared-data
+              mountPath: /data
+        - name: multitool
+          image: wbitt/network-multitool:3.24.4
+          # читатель: тот же каталог, смонтированный только на чтение
+          volumeMounts:
+            - name: shared-data
+              mountPath: /data
+              readOnly: true
+      volumes:
+        - name: shared-data
+          emptyDir: {} # живёт, пока жив Pod, и общий для всех его контейнеров

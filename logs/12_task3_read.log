@@ -1,0 +1,20 @@
+$ kubectl exec -n storage-hw deploy/data-exchange-sc -c multitool -- timeout 13 tail -f /data/out.txt
+2026-10-29 15:58:05 line from busybox (SC)
+2026-10-29 15:58:10 line from busybox (SC)
+2026-10-29 15:58:15 line from busybox (SC)
+2026-10-29 15:58:20 line from busybox (SC)
+2026-10-29 15:58:25 line from busybox (SC)
+2026-10-29 15:58:34 line from busybox (SC)
+2026-10-29 15:58:39 line from busybox (SC)
+2026-10-29 15:58:44 line from busybox (SC)
+2026-10-29 15:58:51 line from busybox (SC)
+2026-10-29 15:59:01 line from busybox (SC)
+2026-10-29 15:59:06 line from busybox (SC)
+2026-10-29 15:59:11 line from busybox (SC)
+command terminated with exit code 143
+$ ls -l /mnt/disks/sc-demo
+total 4
+-rw-r--r-- 1 root root 860 Oct 29 22:59 out.txt
+$ tail -n 2 /mnt/disks/sc-demo/out.txt
+2026-10-29 15:59:11 line from busybox (SC)
+2026-10-29 15:59:16 line from busybox (SC)

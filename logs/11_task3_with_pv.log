@@ -1,0 +1,37 @@
+$ kubectl apply -f manifests/pv-local.yaml
+persistentvolume/pv-local created
+$ kubectl rollout status deployment/data-exchange-sc -n storage-hw --timeout=180s
+Waiting for deployment "data-exchange-sc" rollout to finish: 0 of 1 updated replicas are available...
+deployment "data-exchange-sc" successfully rolled out
+$ kubectl get sc,pv,pvc,pods -n storage-hw
+NAME                                   PROVISIONER                    RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+storageclass.storage.k8s.io/local-sc   kubernetes.io/no-provisioner   Delete          WaitForFirstConsumer   false                  30s
+
+NAME                        CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                    STORAGECLASS   VOLUMEATTRIBUTESCLASS   REASON   AGE
+persistentvolume/pv-local   1Gi        RWO            Retain           Bound    storage-hw/data-sc-pvc   local-sc       <unset>                          2s
+
+NAME                                STATUS   VOLUME     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+persistentvolumeclaim/data-sc-pvc   Bound    pv-local   1Gi        RWO            local-sc       <unset>                 30s
+
+NAME                                    READY   STATUS    RESTARTS   AGE
+pod/data-exchange-sc-7d84bfb77d-jg9lt   2/2     Running   0          31s
+$ kubectl describe pv pv-local
+Name:              pv-local
+Labels:            <none>
+Annotations:       pv.kubernetes.io/bound-by-controller: yes
+Finalizers:        [kubernetes.io/pv-protection]
+StorageClass:      local-sc
+Status:            Bound
+Claim:             storage-hw/data-sc-pvc
+Reclaim Policy:    Retain
+Access Modes:      RWO
+VolumeMode:        Filesystem
+Capacity:          1Gi
+Node Affinity:     
+  Required Terms:  
+    Term 0:        kubernetes.io/hostname in [vladspace-virtualbox]
+Message:           
+Source:
+    Type:  LocalVolume (a persistent volume backed by local storage on a node)
+    Path:  /mnt/disks/sc-demo
+Events:    <none>

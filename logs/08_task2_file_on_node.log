@@ -1,0 +1,11 @@
+$ ls -l /mnt/data/pv-demo
+total 4
+-rw-r--r-- 1 root root 817 Oct 29 22:55 out.txt
+$ wc -l /mnt/data/pv-demo/out.txt
+19 /mnt/data/pv-demo/out.txt
+$ tail -n 3 /mnt/data/pv-demo/out.txt
+2026-10-29 15:55:24 line from busybox (PV)
+2026-10-29 15:55:29 line from busybox (PV)
+2026-10-29 15:55:57 line from busybox (PV)
+$ date '+%F %T'
+2026-10-29 22:56:07

@@ -1,0 +1,41 @@
+$ kubectl apply -n storage-hw -f manifests/pv-pvc.yaml
+persistentvolume/pv-demo created
+persistentvolumeclaim/data-pvc created
+deployment.apps/data-exchange-pvc created
+$ kubectl get pv,pvc -n storage-hw
+NAME                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                 STORAGECLASS   VOLUMEATTRIBUTESCLASS   REASON   AGE
+persistentvolume/pv-demo   1Gi        RWO            Retain           Bound    storage-hw/data-pvc                  <unset>                          1s
+
+NAME                             STATUS    VOLUME    CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+persistentvolumeclaim/data-pvc   Pending   pv-demo   0                                        <unset>                 1s
+$ kubectl describe pv pv-demo
+Name:            pv-demo
+Labels:          <none>
+Annotations:     pv.kubernetes.io/bound-by-controller: yes
+Finalizers:      [kubernetes.io/pv-protection]
+StorageClass:    
+Status:          Bound
+Claim:           storage-hw/data-pvc
+Reclaim Policy:  Retain
+Access Modes:    RWO
+VolumeMode:      Filesystem
+Capacity:        1Gi
+Node Affinity:   <none>
+Message:         
+Source:
+    Type:          HostPath (bare host directory volume)
+    Path:          /mnt/data/pv-demo
+    HostPathType:  DirectoryOrCreate
+Events:            <none>
+$ kubectl rollout status deployment/data-exchange-pvc -n storage-hw --timeout=180s
+Waiting for deployment "data-exchange-pvc" rollout to finish: 0 of 1 updated replicas are available...
+deployment "data-exchange-pvc" successfully rolled out
+$ kubectl get pods -n storage-hw
+NAME                                 READY   STATUS    RESTARTS   AGE
+data-exchange-pvc-5c554f864d-4ztwk   2/2     Running   0          38s
+$ kubectl get pv,pvc -n storage-hw
+NAME                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                 STORAGECLASS   VOLUMEATTRIBUTESCLASS   REASON   AGE
+persistentvolume/pv-demo   1Gi        RWO            Retain           Bound    storage-hw/data-pvc                  <unset>                          48s
+
+NAME                             STATUS   VOLUME    CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+persistentvolumeclaim/data-pvc   Bound    pv-demo   1Gi        RWO                           <unset>                 48s

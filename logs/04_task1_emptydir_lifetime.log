@@ -1,0 +1,10 @@
+$ kubectl exec -n storage-hw deploy/data-exchange -c multitool -- head -1 /data/out.txt
+2026-10-29 15:51:04 line from busybox
+$ kubectl delete pod -n storage-hw -l app=data-exchange
+pod "data-exchange-67888cddd4-brf9x" deleted from storage-hw namespace
+$ kubectl wait -n storage-hw --for=condition=Ready pod -l app=data-exchange --timeout=120s
+pod/data-exchange-67888cddd4-ff484 condition met
+$ kubectl exec -n storage-hw deploy/data-exchange -c multitool -- head -1 /data/out.txt
+2026-10-29 15:51:52 line from busybox
+$ kubectl exec -n storage-hw deploy/data-exchange -c multitool -- wc -l /data/out.txt
+6 /data/out.txt

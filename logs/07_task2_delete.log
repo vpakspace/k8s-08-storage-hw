@@ -1,0 +1,26 @@
+$ kubectl delete deployment data-exchange-pvc -n storage-hw
+deployment.apps "data-exchange-pvc" deleted from storage-hw namespace
+$ kubectl delete pvc data-pvc -n storage-hw
+persistentvolumeclaim "data-pvc" deleted from storage-hw namespace
+$ kubectl get pv,pvc,pods -n storage-hw
+NAME                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS     CLAIM                 STORAGECLASS   VOLUMEATTRIBUTESCLASS   REASON   AGE
+persistentvolume/pv-demo   1Gi        RWO            Retain           Released   storage-hw/data-pvc                  <unset>                          2m45s
+$ kubectl describe pv pv-demo
+Name:            pv-demo
+Labels:          <none>
+Annotations:     pv.kubernetes.io/bound-by-controller: yes
+Finalizers:      [kubernetes.io/pv-protection]
+StorageClass:    
+Status:          Released
+Claim:           storage-hw/data-pvc
+Reclaim Policy:  Retain
+Access Modes:    RWO
+VolumeMode:      Filesystem
+Capacity:        1Gi
+Node Affinity:   <none>
+Message:         
+Source:
+    Type:          HostPath (bare host directory volume)
+    Path:          /mnt/data/pv-demo
+    HostPathType:  DirectoryOrCreate
+Events:            <none>

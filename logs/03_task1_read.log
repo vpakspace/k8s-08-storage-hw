@@ -1,0 +1,14 @@
+$ kubectl exec -n storage-hw deploy/data-exchange -c multitool -- ls -l /data
+total 4
+-rw-r--r--    1 root     root           114 Oct 29 15:51 out.txt
+$ kubectl exec -n storage-hw deploy/data-exchange -c multitool -- timeout 13 tail -f /data/out.txt
+2026-10-29 15:51:04 line from busybox
+2026-10-29 15:51:11 line from busybox
+2026-10-29 15:51:16 line from busybox
+2026-10-29 15:51:21 line from busybox
+2026-10-29 15:51:26 line from busybox
+2026-10-29 15:51:31 line from busybox
+command terminated with exit code 143
+$ kubectl exec -n storage-hw deploy/data-exchange -c multitool -- sh -c "echo test >> /data/out.txt"
+sh: can't create /data/out.txt: Read-only file system
+command terminated with exit code 1
